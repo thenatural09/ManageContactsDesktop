@@ -7,11 +7,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
+import jodd.json.JsonParser;
 import jodd.json.JsonSerializer;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -28,7 +31,6 @@ public class Controller implements Initializable {
     ListView list;
 
     ObservableList<Contact> contacts = FXCollections.observableArrayList();
-
     public void onAdd() throws Exception {
         String t = enterName.getText();
         String t1 = enterPhone.getText();
@@ -41,7 +43,7 @@ public class Controller implements Initializable {
         enterName.clear();
         enterPhone.clear();
         enterEmail.clear();
-        Main.saveToJson(contacts,"contacts.json");
+//        saveToJson (,"contacts.json");
     }
 
     public void onRemove() {
@@ -52,7 +54,40 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         list.setItems(contacts);
-        Main.loadJson("contacts.json");
+        loadJson("contacts.json");
+    }
+
+    public static void saveToJson(ArrayList<Contact> contacts, String fileName) throws Exception {
+        File f2 = new File(fileName);
+        try {
+            JsonSerializer serializer = new JsonSerializer();
+            ContactWrapper cw = new ContactWrapper(contacts);
+            ArrayList<Contact> jsonContacts = new ArrayList<>();
+            jsonContacts.addAll(contacts);
+            cw.contacts = jsonContacts;
+            String json = serializer.deep(true).serialize(cw);
+            FileWriter fw = new FileWriter(f2);
+            fw.write(json);
+            fw.close();
+        } catch(Exception e) {
+            throw new Exception("Can't save");
+        }
+    }
+
+    public static void loadJson(String fileName) {
+        File f = new File(fileName);
+        FileReader fr = null;
+        try {
+            fr = new FileReader(f);
+            int fileSize = (int) f.length();
+            char[] contents = new char[fileSize];
+            fr.read(contents, 0, fileSize);
+            JsonParser parser = new JsonParser();
+            ContactWrapper cw = parser.parse(contents,ContactWrapper.class);
+            System.out.println(cw);
+        } catch (Exception e) {
+            System.out.println("Couldn't load file");
+        }
     }
 
 }

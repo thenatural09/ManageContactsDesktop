@@ -24,36 +24,6 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void saveToJson(ObservableList<Contact> contacts, String fileName) throws Exception {
-        File f2 = new File(fileName);
-        try {
-            JsonSerializer serializer = new JsonSerializer();
-            ContactWrapper cw = new ContactWrapper(contacts);
-            cw.contacts = contacts;
-            String json = serializer.deep(true).serialize(cw);
-            FileWriter fw = new FileWriter(f2);
-            fw.write(json);
-            fw.close();
-        } catch(Exception e) {
-            throw new Exception("Can't save");
-        }
-    }
-
-    public static void loadJson(String fileName) {
-        File f = new File(fileName);
-        FileReader fr = null;
-        try {
-            fr = new FileReader(f);
-            int fileSize = (int) f.length();
-            char[] contents = new char[fileSize];
-            fr.read(contents, 0, fileSize);
-            JsonParser parser = new JsonParser();
-            ContactWrapper cw = parser.parse(contents,ContactWrapper.class);
-            System.out.println(cw);
-        } catch (Exception e) {
-            System.out.println("Couldn't load file");
-        }
-    }
 
     public static void main(String[] args) {
         launch(args);

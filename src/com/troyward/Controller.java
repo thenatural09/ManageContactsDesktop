@@ -41,7 +41,7 @@ public class Controller implements Initializable {
         enterName.clear();
         enterPhone.clear();
         enterEmail.clear();
-        saveToJson(contacts,"contacts.json");
+        Main.saveToJson(contacts,"contacts.json");
     }
 
     public void onRemove() {
@@ -52,21 +52,6 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         list.setItems(contacts);
-    }
-
-    public static void saveToJson(ObservableList<Contact> contacts,String fileName) throws Exception {
-        File f2 = new File(fileName);
-        try {
-            JsonSerializer serializer = new JsonSerializer();
-            ContactWrapper cw = new ContactWrapper(contacts);
-            cw.contacts = contacts;
-            String json = serializer.deep(true).serialize(cw);
-            FileWriter fw = new FileWriter(f2);
-            fw.write(json);
-            fw.close();
-        } catch(Exception e) {
-            throw new Exception("Can't save");
-        }
     }
 
 }

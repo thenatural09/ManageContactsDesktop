@@ -7,6 +7,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
+import jodd.json.JsonSerializer;
+
+import java.io.File;
+import java.io.FileWriter;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -25,7 +29,7 @@ public class Controller implements Initializable {
 
     ObservableList<Contact> contacts = FXCollections.observableArrayList();
 
-    public void onAdd() {
+    public void onAdd() throws Exception {
         String t = enterName.getText();
         String t1 = enterPhone.getText();
         String t2 = enterEmail.getText();
@@ -37,6 +41,7 @@ public class Controller implements Initializable {
         enterName.clear();
         enterPhone.clear();
         enterEmail.clear();
+        saveToJson(contacts,"contacts.json");
     }
 
     public void onRemove() {
@@ -48,4 +53,20 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         list.setItems(contacts);
     }
+
+    public static void saveToJson(ObservableList<Contact> contacts,String fileName) throws Exception {
+        File f2 = new File(fileName);
+        try {
+            JsonSerializer serializer = new JsonSerializer();
+            ContactWrapper cw = new ContactWrapper(contacts);
+            cw.contacts = contacts;
+            String json = serializer.deep(true).serialize(cw);
+            FileWriter fw = new FileWriter(f2);
+            fw.write(json);
+            fw.close();
+        } catch(Exception e) {
+            throw new Exception("Can't save");
+        }
+    }
+
 }
